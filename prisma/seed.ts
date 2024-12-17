@@ -8,8 +8,8 @@ async function main() {
     // Seed users
     await prisma.user.createMany({
         data: [
-            { name: 'testuser1', phone: '09001000000', password: 'hashedpassword1', role:'customer' },
-            { name: 'testuser2', phone: '09002000000', password: 'hashedpassword2', role:'customer' },
+            { name: 'testuser1', phone: '09001000000', password: 'hashedpassword1', role:'CUSTOMER' },
+            { name: 'testuser2', phone: '09002000000', password: 'hashedpassword2', role:'CUSTOMER' },
         ],
     });
 
