@@ -7,7 +7,7 @@ import {
     getUserById,
     updateUser,
     deleteUser } from "../controllers/userController";
-import { protect } from "../middlewares/authMiddleware";
+import { protect, authorizedRoles } from "../middlewares/authMiddleware";
 
 
 const router = express.Router();
@@ -23,16 +23,16 @@ router.post("/login", loginUser);
 router.get("/me", protect, me);
 
 // Get All users
-router.get("/", protect, getAllUsers);
+router.get("/", protect, authorizedRoles('ADMIN'), getAllUsers);
 
 // Get a user by id
-router.get("/:id", protect, getUserById);
+router.get("/:id", protect, authorizedRoles('ADMIN'), getUserById);
 
 // Update user information
-router.put("/:id", protect, updateUser);
+router.put("/:id", protect, authorizedRoles('ADMIN'), updateUser);
 
 // Delete a user
-router.delete("/:id", protect, deleteUser)
+router.delete("/:id", protect, authorizedRoles('ADMIN'), deleteUser)
 
 
 

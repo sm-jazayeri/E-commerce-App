@@ -9,7 +9,7 @@ import env from "../config/env";
 
 const prisma = new PrismaClient();
 
-
+// Middleware to verify user's authentication
 export const protect = async (req: userRequest, res: Response, next: NextFunction): Promise<void> => {
 
     let token;
@@ -35,6 +35,22 @@ export const protect = async (req: userRequest, res: Response, next: NextFunctio
         res.status(401).json({ message: "No token provided" });
         return;
     }
+};
 
 
-}
+
+// Middleware for role-based authorization
+export const authorizedRoles = (...roles: string[]) => {
+    return (req: userRequest, res: Response, next: NextFunction) => {
+        if (!req.user) {
+            res.status(401).json({ message: "Not authenticated"})
+            return;
+        }
+        if (!roles.includes( req.user.role )) {
+            res.status(500).json({ message: "Access denied" })
+            return;
+        }
+
+        next();
+    }
+};
