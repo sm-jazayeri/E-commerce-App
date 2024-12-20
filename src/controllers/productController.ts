@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
+import path from "path";
 
 
 
@@ -10,15 +11,19 @@ const prisma = new PrismaClient();
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
     const {name, description, price, stock} = req.body;
 
+    const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : null;
+
     try {
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
-                price,
-                stock
+                price: parseFloat(price),
+                stock: parseInt(stock), 
+                imageUrl
             }
         });
+
         res.status(201).json({ message: "Product created successfully", product });
 
     } catch (err) {
@@ -66,6 +71,7 @@ export const getProductById = async (req: Request, res: Response): Promise <void
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId = parseInt(req.params.id);
     const {name, description, price, stock} = req.body;
+    const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : undefined;
 
     try {
         // Check if product exists
@@ -81,7 +87,13 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
         // Update
         const updatedProduct = await prisma.product.update({
             where: { id: productId },
-            data : { name, description, price, stock},
+            data : { 
+                name,
+                description, 
+                price: parseInt(price),
+                stock: parseInt(stock), 
+                ...(imageUrl && {imageUrl}) // update image if 
+            },
         });
 
         res.status(200).json({ message: "Product updated successfully", updatedProduct});

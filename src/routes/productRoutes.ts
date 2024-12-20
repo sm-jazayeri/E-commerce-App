@@ -7,15 +7,12 @@ import {
     deleteProduct
 } from "../controllers/productController";
 import { protect, authorizedRoles } from "../middlewares/authMiddleware";
+import { upload } from "../utils/upload";
 
 
 
 const router = express.Router();
 
-
-
-// Create product
-router.post('/', protect, authorizedRoles('ADMIN'), createProduct);
 
 
 // Get all products
@@ -26,8 +23,12 @@ router.get('/', getAllProducts);
 router.get('/:id', getProductById)
 
 
+// Create product
+router.post('/', protect, authorizedRoles('ADMIN'), upload.single('image'), createProduct);
+
+
 // Update a product
-router.put('/:id', protect, authorizedRoles('ADMIN'), updateProduct);
+router.put('/:id', protect, authorizedRoles('ADMIN'), upload.single('image'), updateProduct);
 
 
 // Delete a product
