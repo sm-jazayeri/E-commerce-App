@@ -2,14 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import userRequest from '../../types/express';
+import UserRequest from "../../types/express";
 import env from "../config/env";
 
 
 const prisma = new PrismaClient();
 
 // Register a user
-export const registerUser = async (req: userRequest, res: Response) => {
+export const registerUser = async (req: UserRequest, res: Response) => {
     const { name, phone, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +38,7 @@ export const registerUser = async (req: userRequest, res: Response) => {
 
 
 // Login a user
-export const loginUser = async (req: userRequest, res: Response): Promise<void> => {
+export const loginUser = async (req: UserRequest, res: Response): Promise<void> => {
     const { phone, password } = req.body;
 
     try {
@@ -73,7 +73,7 @@ export const loginUser = async (req: userRequest, res: Response): Promise<void> 
 
 
 // Get the current logged in user
-export const me = async (req: userRequest, res: Response): Promise<void> => {
+export const me = async (req: UserRequest, res: Response): Promise<void> => {
     try {
         if (!req.user) {
             res.status(404).json({ message: "User not found" });
@@ -87,7 +87,7 @@ export const me = async (req: userRequest, res: Response): Promise<void> => {
 
 
 // Get All users
-export const getAllUsers = async (req: userRequest, res: Response): Promise<void> => {
+export const getAllUsers = async (req: UserRequest, res: Response): Promise<void> => {
     try {
         const users = await prisma.user.findMany({
             select: {id: true, name: true, phone: true, role: true},
@@ -101,7 +101,7 @@ export const getAllUsers = async (req: userRequest, res: Response): Promise<void
 
 
 // Get a user by id
-export const getUserById = async (req: userRequest, res: Response): Promise<void> => {
+export const getUserById = async (req: UserRequest, res: Response): Promise<void> => {
  
     const userId = parseInt(req.params.id);
 
@@ -124,7 +124,7 @@ export const getUserById = async (req: userRequest, res: Response): Promise<void
 
 
 // Update user information
-export const updateUser = async (req: userRequest, res: Response): Promise<void> => {
+export const updateUser = async (req: UserRequest, res: Response): Promise<void> => {
    
     const { name, phone } = req.body;
     const userId = parseInt(req.params.id);
@@ -164,7 +164,7 @@ export const updateUser = async (req: userRequest, res: Response): Promise<void>
 
 
 // Delete a user
-export const deleteUser = async (req: userRequest, res: Response): Promise<void> => {
+export const deleteUser = async (req: UserRequest, res: Response): Promise<void> => {
     const userId = parseInt(req.params.id);
 
     try {

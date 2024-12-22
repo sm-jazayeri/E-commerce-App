@@ -75,7 +75,7 @@
 
 import {Request} from 'express';
 
-interface userRequest extends Request {
+interface UserRequest extends Request {
     headers: {
         authorization?: string;
     };
@@ -87,4 +87,4 @@ interface userRequest extends Request {
     } | null;
 }
 
-export default userRequest;
+export default UserRequest;

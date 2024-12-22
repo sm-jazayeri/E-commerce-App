@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 // import express from "express";
 import {Request, Response, NextFunction} from 'express';
-import userRequest from '../../types/express';
+import UserRequest from "../../types/express";
 import { JwtPayload } from "jsonwebtoken";
 import env from "../config/env";
 
@@ -10,7 +10,7 @@ import env from "../config/env";
 const prisma = new PrismaClient();
 
 // Middleware to verify user's authentication
-export const protect = async (req: userRequest, res: Response, next: NextFunction): Promise<void> => {
+export const protect = async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
 
     let token;
     if ( 
@@ -41,7 +41,7 @@ export const protect = async (req: userRequest, res: Response, next: NextFunctio
 
 // Middleware for role-based authorization
 export const authorizedRoles = (...roles: string[]) => {
-    return (req: userRequest, res: Response, next: NextFunction) => {
+    return (req: UserRequest, res: Response, next: NextFunction) => {
         if (!req.user) {
             res.status(401).json({ message: "Not authenticated"})
             return;
