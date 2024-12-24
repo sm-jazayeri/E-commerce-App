@@ -18,6 +18,15 @@ enum Role {
   CUSTOMER
 }
 
+enum OrderStatus {
+  UNPAID
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -27,6 +36,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Cart      Cart?
+  Order     Order[]
 }
 
 model Product {
@@ -45,11 +55,12 @@ model Product {
 model Order {
   id          Int         @id @default(autoincrement())
   userId      Int
+  user        User        @relation(fields: [userId], references: [id])
   totalAmount Float
-  status      String
+  status      OrderStatus @default(UNPAID)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  OrderItem   OrderItem[]
+  items       OrderItem[]
 }
 
 model OrderItem {
@@ -74,7 +85,7 @@ model Cart {
 model CartItem {
   id        Int     @id @default(autoincrement())
   cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId Int
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
