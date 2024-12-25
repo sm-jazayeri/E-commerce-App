@@ -1,12 +1,12 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware";
+import { protect } from "../../middlewares/authMiddleware";
 import {
     addToCart,
     getCart,
     updateCartItem,
     removeCartItem,
     clearCart
-} from "../controllers/cartController";
+} from "../../controllers/customer/cartController";
 
 
 const router = express.Router();

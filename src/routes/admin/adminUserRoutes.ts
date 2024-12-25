@@ -1,26 +1,15 @@
 import express from "express";
 import {
-    registerUser,
-    loginUser,
-    me,
     getAllUsers,
     getUserById,
     updateUser,
-    deleteUser } from "../controllers/userController";
-import { protect, authorizedRoles } from "../middlewares/authMiddleware";
+    deleteUser } from "../../controllers/admin/adminUserController";
+import { protect, authorizedRoles } from "../../middlewares/authMiddleware";
 
 
 const router = express.Router();
 
 
-// Register a user
-router.post("/register", registerUser);
-
-// Login a user
-router.post("/login", loginUser);
-
-// Get the current logged in user
-router.get("/me", protect, me);
 
 // Get All users
 router.get("/", protect, authorizedRoles('ADMIN'), getAllUsers);
@@ -32,7 +21,7 @@ router.get("/:id", protect, authorizedRoles('ADMIN'), getUserById);
 router.put("/:id", protect, authorizedRoles('ADMIN'), updateUser);
 
 // Delete a user
-router.delete("/:id", protect, authorizedRoles('ADMIN'), deleteUser)
+router.delete("/:id", protect, authorizedRoles('ADMIN'), deleteUser);
 
 
 

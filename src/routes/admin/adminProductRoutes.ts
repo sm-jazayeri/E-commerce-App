@@ -1,26 +1,16 @@
 import express from "express";
 import {
     createProduct,
-    getAllProducts,
-    getProductById,
     updateProduct,
     deleteProduct
-} from "../controllers/productController";
-import { protect, authorizedRoles } from "../middlewares/authMiddleware";
-import { upload } from "../utils/upload";
+} from "../../controllers/admin/adminProductController";
+import { protect, authorizedRoles } from "../../middlewares/authMiddleware";
+import { upload } from "../../utils/upload";
 
 
 
 const router = express.Router();
 
-
-
-// Get all products
-router.get('/', getAllProducts);
-
-
-// Get a product by id
-router.get('/:id', getProductById)
 
 
 // Create product
