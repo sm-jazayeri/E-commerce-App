@@ -9,17 +9,20 @@ import adminProductRoutes from './routes/admin/adminProductRoutes';
 import adminOrderRoutes from './routes/admin/adminOrderRoutes';
 import env from "./config/env";
 import path from 'path';
-// import YAML from 'yamljs';
-// import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
 
 
 
 const app = express();
 
-// TODO: Add swagger documentation
+
 // Load the swagger YAML file & serve swagger UI
-// const swaggerDocument = YAML.load('./docs/swagger.yaml');
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+const swaggerDocument = YAML.load('./docs/swagger.yaml');
+swaggerDocument.servers = [
+    { url: `http://localhost:${env.PORT}` },
+  ];
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use(express.json());

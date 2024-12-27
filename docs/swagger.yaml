@@ -1,0 +1,531 @@
+openapi: 3.0.3
+info:
+  title: E-commerce API
+  description: API documentation  for E-commerce app
+  version: 1.0.0
+# servers:
+#   - url: http://localhost:5000/api
+tags:
+  - name: users
+    description: Operations for user
+  - name: products
+    description: Operations for product
+  - name: orders
+    description: Operations for order
+  - name: carts
+    description: Operations for cart
+  - name: admin-users
+    description: Operations for user - Admin
+  - name: admin-products
+    description: Operations for product - Admin
+  - name: admin-orders
+    description: Operations for order - Admin
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Product:
+      type: object
+      required:
+        - name
+        - description
+        - price
+      properties:
+        name:
+          type: string
+          description: the name of the product
+          example: product name
+        description:
+          type: string
+          description: description of the product
+          example: this is the description of the product
+        price:
+          type: number
+          format: float
+          description: the price of the product
+          example: "120000"
+        stock:
+          type: integer
+          description: the quantity of the product in stock
+          example: "20"
+        image:
+          type: string
+          format: binary
+          description: the URL of the uploaded product image
+
+    Auth:
+      type: object
+      required:
+        - phone
+        - password
+      properties:
+        phone:
+          type: string
+          description: the phone number of the user
+          example: "09101112233"
+        password:
+          type: string
+          description: the price of the product
+          example: password123
+    Cart:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+          description: the id of the product
+          example: "10"
+        quantity:
+          type: integer
+          description: the quantity of the product
+          example: "2"
+
+paths:
+  /api/admin/products:
+    post:
+      tags:
+        - admin-products
+      summary: Create a new product
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+
+  /api/admin/products/{id}:
+    put:
+      tags:
+        - admin-products
+      summary: Update a product
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of the product
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+
+    delete:
+      tags:
+        - admin-products
+      summary: Delete a product
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of the product
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+
+  /api/customer/products:
+    get:
+      tags:
+        - products
+      summary: Get all the products
+      responses:
+        "200":
+          description: Product fetch successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+
+  /api/customer/products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get a product by id
+      parameters:
+        - name: id
+          in: path
+          description: Id of the product
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product fetch successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "500":
+          description: Server error
+
+  /api/customer/users/register:
+    post:
+      tags:
+        - users
+      summary: Register a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Auth"
+      responses:
+        "201":
+          description: User registered successfully
+        "500":
+          description: Server error
+
+  /api/customer/users/login:
+    post:
+      tags:
+        - users
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Auth"
+      responses:
+        "200":
+          description: User login successfully
+        "500":
+          description: Server error
+
+  /api/customer/users/me:
+    get:
+      tags:
+        - users
+      summary: Get the info of the logged in user
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Get user info successfully
+        "500":
+          description: Server error
+
+  /api/admin/users:
+    get:
+      tags:
+        - admin-users
+      summary: Get all the users
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Get all the users successfully
+        "500":
+          description: Server error
+
+  /api/admin/users/{id}:
+    get:
+      tags:
+        - admin-users
+      summary: Get a user by id
+      parameters:
+        - name: id
+          in: path
+          description: Id of the user
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Get the user successfully
+        "500":
+          description: Server error
+
+    put:
+      tags:
+        - admin-users
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          description: Id of the user
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User updated successfully
+        "500":
+          description: Server error
+
+    delete:
+      tags:
+        - admin-users
+      summary: Delete a user
+      parameters:
+        - name: id
+          in: path
+          description: Id of the user
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: User deleted successfully
+        "500":
+          description: Server error
+
+  /api/customer/cart/add:
+    post:
+      tags:
+        - carts
+      summary: Create a cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cart"
+      security:
+        - BearerAuth: []
+      responses:
+        "201":
+          description: Cart created successfully
+        "500":
+          description: Server error
+
+  /api/customer/cart:
+    get:
+      tags:
+        - carts
+      summary: Get cart of the logged in user
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Cart fetched successfully
+        "500":
+          description: Server error
+
+  /api/customer/cart/update/{itemId}:
+    put:
+      tags:
+        - carts
+      summary: Update cart items of the logged in user
+      parameters:
+        - name: itemId
+          in: path
+          description: Id of the cart item
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                quantity:
+                  type: integer
+                  description: the quantity of the product
+                  example: "2"
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Cart updated successfully
+        "500":
+          description: Server error
+  /api/customer/cart/delete/{itemId}:
+    delete:
+      tags:
+        - carts
+      summary: Delete a cart item from cart
+      parameters:
+        - name: itemId
+          in: path
+          description: Id of the cart item
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Cart item deleted successfully
+        "500":
+          description: Server error
+  /api/customer/cart/clear:
+    delete:
+      tags:
+        - carts
+      summary: Clear all cart items from a cart
+      parameters:
+        - name: itemId
+          in: path
+          description: Id of the cart item
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Cart item cleared successfully
+        "500":
+          description: Server error
+  /api/customer/orders:
+    post:
+      tags:
+        - orders
+      summary: Place an order
+      security:
+        - BearerAuth: []
+      responses:
+        "201":
+          description: Order placed successfully
+        "500":
+          description: Server error
+    get:
+      tags:
+        - orders
+      summary: Get orders of logged in user
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Orders fetched successfully
+        "500":
+          description: Server error
+  /api/customer/orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: Get an order of logged in user by id
+      parameters:
+        - name: id
+          in: path
+          description: Id of the order
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Order fetched successfully
+        "500":
+          description: Server error
+
+  /api/admin/orders:
+    get:
+      tags:
+        - admin-orders
+      summary: Get all orders
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Orders fetched successfully
+        "500":
+          description: Server error
+
+  /api/admin/orders/{id}:
+    get:
+      tags:
+        - admin-orders
+      summary: Get an order by id
+      parameters:
+        - name: id
+          in: path
+          description: Id of the order
+          required: true
+          schema:
+            type: integer
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Order fetched successfully
+        "500":
+          description: Server error
+  /api/admin/orders/{id}/status:
+    put:
+      tags:
+        - admin-orders
+      summary: Update the order status
+      parameters:
+        - name: id
+          in: path
+          description: Id of the order
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  description: the status of the order
+                  example: "UNPAID"
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Order fetched successfully
+        "500":
+          description: Server error
