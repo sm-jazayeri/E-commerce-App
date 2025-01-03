@@ -169,6 +169,44 @@ paths:
       tags:
         - products
       summary: Get all the products
+      parameters:
+        - name: name
+          in: query
+          description: Name of the product
+          required: false
+          schema:
+            type: string
+        - name: minPrice
+          in: query
+          description: Min price of the product
+          required: false
+          schema:
+            type: string
+        - name: maxPrice
+          in: query
+          description: Max price of the product
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort of the product
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
+
       responses:
         "200":
           description: Product fetch successfully
@@ -253,6 +291,37 @@ paths:
       tags:
         - admin-users
       summary: Get all the users
+      parameters:
+        - name: name
+          in: query
+          description: Name of the user
+          required: false
+          schema:
+            type: string
+        - name: phone
+          in: query
+          description: Phone of the user
+          required: false
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Role of the user
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
       security:
         - BearerAuth: []
       responses:
@@ -470,6 +539,32 @@ paths:
       tags:
         - admin-orders
       summary: Get all orders
+      parameters:
+        - name: userId
+          in: query
+          description: User of the order
+          required: false
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Status of the order
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
+
       security:
         - BearerAuth: []
       responses:

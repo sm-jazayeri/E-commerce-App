@@ -10,7 +10,36 @@ const prisma = new PrismaClient();
 // Get all orders
 export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
     try {
+        const {
+            userId,
+            status,
+            sort = 'createdAt',
+            order = 'desc',
+            page = '1',
+            limit = '10'
+        } = req.query;
+
+        // Pagination
+        const pageNumber = parseInt(page as string);
+        const pageSize = parseInt(limit as string);
+        const skip = (pageNumber - 1) * pageSize;
+
+        // Filters
+        const filters: any = {};
+        if (userId) filters.userId = parseInt(userId as string);
+        if (status) filters.status = status;
+
+        // Get total count of orders for pagination
+        const totalCount = await prisma.order.count({ where: filters });
+
+        // Get orders
         const orders = await prisma.order.findMany({
+            where: filters,
+            orderBy: {
+                [sort as string]: order === 'desc' ? 'desc' : 'asc',
+            },
+            skip,
+            take: pageSize,
             include: {
                 user: {
                     select: { id: true, name: true, phone: true, role: true }

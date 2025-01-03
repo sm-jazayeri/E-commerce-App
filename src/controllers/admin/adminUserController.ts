@@ -13,11 +13,51 @@ const prisma = new PrismaClient();
 // Get All users
 export const getAllUsers = async (req: UserRequest, res: Response): Promise<void> => {
     try {
+        const {
+            name,
+            phone,
+            role,
+            sort = 'createdAt',
+            order = 'desc',
+            page = '1',
+            limit = '10'
+        } = req.query;
+
+        // Pagination
+        const pageNumber = parseInt(page as string);
+        const pageSize = parseInt(limit as string);
+        const skip = (pageNumber - 1) * pageSize;
+
+        // Filters
+        const filters: any = {};
+        if (name) filters.name = name;
+        if (phone) filters.phone = phone;
+        if(role) filters.role = role;
+
+        // Get total count of users for pagination
+        const totalCount = await prisma.user.count({ where: filters });
+
+        // Get users
         const users = await prisma.user.findMany({
             select: {id: true, name: true, phone: true, role: true},
+            where: filters,
+            orderBy: {
+                [sort as string]: order === 'desc' ? 'desc' : 'asc',
+            },
+            skip,
+            take: pageSize,
         });
-        res.status(200).json(users);
 
+        res.status(200).json({
+            data: users,
+            pagination: {
+                total: totalCount,
+                totalPages: Math.ceil(totalCount / pageSize),
+                page: pageNumber,
+                limit: pageSize
+            }
+        });
+        
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch users', err });
     }
