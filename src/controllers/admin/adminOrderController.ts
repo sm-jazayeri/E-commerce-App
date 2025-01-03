@@ -12,7 +12,9 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
     try {
         const orders = await prisma.order.findMany({
             include: {
-                user: true,
+                user: {
+                    select: { id: true, name: true, phone: true, role: true }
+                },
                 items: {
                     include: {
                         product: true
