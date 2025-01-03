@@ -51,7 +51,15 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
                 }
             }
         });
-        res.status(200).json(orders);
+        res.status(200).json({
+            data: orders,
+            pagination: {
+                total: totalCount,
+                totalPages: Math.ceil(totalCount / pageSize),
+                page: pageNumber,
+                limit: pageSize
+            }
+        });
 
     } catch (err) {
         res.status(500).json({ message: 'Server error', err });
