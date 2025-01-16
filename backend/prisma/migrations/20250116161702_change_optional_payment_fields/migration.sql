@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Payment" ALTER COLUMN "refNum" DROP NOT NULL,
+ALTER COLUMN "traceNum" DROP NOT NULL;

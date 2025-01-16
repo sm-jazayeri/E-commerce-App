@@ -14,6 +14,8 @@ tags:
     description: Operations for order
   - name: carts
     description: Operations for cart
+  - name: payments
+    description: Operation for payment
   - name: admin-users
     description: Operations for user - Admin
   - name: admin-products
@@ -477,13 +479,6 @@ paths:
       tags:
         - carts
       summary: Clear all cart items from a cart
-      parameters:
-        - name: itemId
-          in: path
-          description: Id of the cart item
-          required: true
-          schema:
-            type: integer
       security:
         - BearerAuth: []
       responses:
@@ -622,5 +617,31 @@ paths:
       responses:
         "200":
           description: Order fetched successfully
+        "500":
+          description: Server error
+
+  /api/customer/payments/create:
+    post:
+      tags:
+        - payments
+      summary: Create a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - orderId
+              properties:
+                orderId:
+                  type: number
+                  description: the id of the order
+                  example: "9999"
+      security:
+        - BearerAuth: []
+      responses:
+        "201":
+          description: Payment created successfully
         "500":
           description: Server error
