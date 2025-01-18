@@ -8,6 +8,7 @@ import adminUserRoutes from './routes/admin/adminUserRoutes';
 import adminProductRoutes from './routes/admin/adminProductRoutes';
 import adminOrderRoutes from './routes/admin/adminOrderRoutes';
 import paymentRoutes from './routes/customer/paymentRoutes';
+import adminPaymentRoutes from './routes/admin/adminPaymentRoutes';
 import env from "./config/env";
 import path from 'path';
 import YAML from 'yamljs';
@@ -35,12 +36,13 @@ app.use("/api/customer/users", userRoutes);
 app.use("/api/customer/products", productRoutes);
 app.use("/api/customer/cart", cartRoutes);
 app.use("/api/customer/orders", orderRoutes);
-app.use("/api/customer/payments", paymentRoutes )
+app.use("/api/customer/payments", paymentRoutes);
 
 // Admin endpoints
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/admin/payments", adminPaymentRoutes);
 
 
 

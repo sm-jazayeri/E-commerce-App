@@ -184,4 +184,63 @@ export const verifyPayment = async (req: Request, res: Response): Promise<void> 
     } catch (err) {
         res.status(500).json({ message: 'Server error', err});
     }
-}
+};
+
+
+// Get payments for customer
+export const getPayments = async (req: UserRequest, res: Response) => {
+    try {
+        if (!req.user) {
+            res.status(404).json({message: "User not found"});
+            return;
+        }
+        const userId = req.user.id
+        const {
+            status,
+            sort = 'createdAt',
+            order = 'desc',
+            page = '1',
+            limit = '10'
+        } = req.query
+        
+        // Pagination
+        const pageNumber = parseInt(page as string);
+        const pageSize = parseInt(limit as string);
+        const skip = (pageNumber - 1) * pageSize;
+
+        // Filters
+        const filters: any = {
+            ...(status && { status }), 
+            order: { userId }, 
+        };
+
+        // Get total count of payments for pagination
+        const totalCount = await prisma.payment.count({ where: filters });
+
+        // Get payments
+        const payments = await prisma.payment.findMany({
+            where: filters,
+            orderBy: {
+                [sort as string]: order === 'desc' ? 'desc' : 'asc',
+            },
+            skip,
+            take: pageSize,
+        });
+
+        res.status(200).json({
+            data: payments,
+            pagination: {
+                total: totalCount,
+                totalPages: Math.ceil(totalCount / pageSize),
+                page: pageNumber,
+                limit: pageSize
+            }
+        });
+
+    } catch  (err) {
+        res.status(500).json({
+            message: 'Server error',
+            err
+        });
+    }
+};

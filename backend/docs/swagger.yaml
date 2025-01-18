@@ -22,6 +22,8 @@ tags:
     description: Operations for product - Admin
   - name: admin-orders
     description: Operations for order - Admin
+  - name: admin-payments
+    description: Operation for payment - Admin
 
 components:
   securitySchemes:
@@ -643,5 +645,88 @@ paths:
       responses:
         "201":
           description: Payment created successfully
+        "500":
+          description: Server error
+  /api/customer/payments:
+    get:
+      tags:
+        - payments
+      summary: Get all the payments of the customer
+      parameters:
+        - name: status
+          in: query
+          description: Status of the payment
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort of the payments
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Payments fetch successfully
+        "500":
+          description: Server error
+
+  /api/admin/payments:
+    get:
+      tags:
+        - admin-payments
+      summary: Get all the payments
+      parameters:
+        - name: status
+          in: query
+          description: Status of the payment
+          required: false
+          schema:
+            type: string
+        - name: phone
+          in: query
+          description: Phone number of the customer
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort of the payments
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+
+      responses:
+        "200":
+          description: Payments fetch successfully
         "500":
           description: Server error
