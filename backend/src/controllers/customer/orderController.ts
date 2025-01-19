@@ -4,7 +4,11 @@ import UserRequest from "../../../types/express";
 
 
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(
+    {
+        log: ['query', 'info', 'warn', 'error']
+    }
+);
 
 
 

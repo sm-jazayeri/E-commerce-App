@@ -3,7 +3,11 @@ import { Request, Response } from "express";
 
 
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(
+    {
+        log: ['query', 'info', 'warn', 'error']
+    }
+);
 
 
 

@@ -6,7 +6,11 @@ import UserRequest from "../../../types/express";
 import env from "../../config/env";
 
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(
+    {
+        log: ['query', 'info', 'warn', 'error']
+    }
+);
 
 
 

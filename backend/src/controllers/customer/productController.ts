@@ -4,7 +4,11 @@ import path from "path";
 
 
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient(
+    {
+        log: ['query', 'info', 'warn', 'error']
+    }
+);
 
 
 
