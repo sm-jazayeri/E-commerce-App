@@ -52,7 +52,7 @@ try {
         }
 
         // Convert amount to Rial
-        const amount = parseInt(order.totalAmount.toString() + "0");
+        const amount = parseInt(order.finalAmount.toString() + "0");
 
         // Unique resNum 
         const resNum = uuidv4();

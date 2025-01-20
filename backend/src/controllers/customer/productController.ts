@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 import path from "path";
+import {calculateDiscountedPrice} from "../../utils/discount";
 
 
 
@@ -48,9 +49,16 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
             skip,
             take: pageSize,
         });
-        
+
+        // product with final price
+        const productsWithFinalPrice = products.map(product => ({
+            ...product,
+            finalPrice: calculateDiscountedPrice(product.price, product.discount),
+        }));
+
+        // response
         res.status(200).json({
-            data: products,
+            data: productsWithFinalPrice,
             pagination: {
                 total: totalCount,
                 totalPages: Math.ceil(totalCount / pageSize),
@@ -78,7 +86,7 @@ export const getProductById = async (req: Request, res: Response): Promise <void
         if (!product) {
             res.status(404).json({ message: "Product not found" });
             return;
-        }
+        }        
         
         res.status(200).json(product);
        

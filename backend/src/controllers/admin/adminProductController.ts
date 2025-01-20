@@ -13,9 +13,12 @@ const prisma = new PrismaClient(
 
 // Create a product
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
-    const {name, description, price, stock} = req.body;
+    const {name, description, price, stock, isDiscounted, discount} = req.body;
 
     const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : null;
+
+    // Convert isDiscounted to boolean if it's a string
+    const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
 
     try {
         const product = await prisma.product.create({
@@ -24,7 +27,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 description,
                 price: parseFloat(price),
                 stock: parseInt(stock), 
-                imageUrl
+                imageUrl,
+                isDiscounted: isDiscountedBool,
+                discount: parseFloat(discount)
             }
         });
 
@@ -40,8 +45,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 // Update a product
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId = parseInt(req.params.id);
-    const {name, description, price, stock} = req.body;
+    const {name, description, price, stock, isDiscounted, discount} = req.body;
     const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : undefined;
+
+    // Convert isDiscounted to boolean if it's a string
+    const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
 
     try {
         // Check if product exists
@@ -62,7 +70,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
                 description, 
                 price: parseInt(price),
                 stock: parseInt(stock), 
-                ...(imageUrl && {imageUrl}) // update image if 
+                ...(imageUrl && {imageUrl}), // update image if 
+                isDiscounted: isDiscountedBool,
+                discount: parseFloat(discount)
             },
         });
 

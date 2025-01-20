@@ -57,6 +57,14 @@ components:
           type: integer
           description: the quantity of the product in stock
           example: "20"
+        isDiscounted:
+          type: boolean
+          description: Enable or disable product discount
+          example: false
+        discount:
+          type: number
+          description: product discount amount
+          example: "20"
         image:
           type: string
           format: binary

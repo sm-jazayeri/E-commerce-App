@@ -40,6 +40,8 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
 
         // Total price and check stock
         let totalAmount = 0;
+        let finalAmount = 0;
+        let totalDiscount = 0;
         const orderItems = [];
 
         for (const item of cart[0].items) {
@@ -49,6 +51,14 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
             }
 
             totalAmount += item.quantity * item.product.price;
+
+
+            item.product.isDiscounted ?
+                totalDiscount += item.quantity * item.product.price * ( item.product.discount || 0 ) / 100 :
+                totalDiscount = 0;
+
+
+            finalAmount = totalAmount - totalDiscount;
 
             orderItems.push({
                 productId: item.productId,
@@ -62,6 +72,7 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
             data: {
                 userId,
                 totalAmount,
+                finalAmount,
                 items: {
                     create: orderItems,
                 }
