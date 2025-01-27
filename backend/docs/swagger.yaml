@@ -24,6 +24,8 @@ tags:
     description: Operations for order - Admin
   - name: admin-payments
     description: Operation for payment - Admin
+  - name: admin-coupons
+    description: Operation for coupon - Admin
 
 components:
   securitySchemes:
@@ -69,7 +71,6 @@ components:
           type: string
           format: binary
           description: the URL of the uploaded product image
-
     Auth:
       type: object
       required:
@@ -98,6 +99,36 @@ components:
           type: integer
           description: the quantity of the product
           example: "2"
+    Coupon:
+      type: object
+      required:
+        - code
+        - discount
+        - type
+        - expiryDate
+        - isActive
+      properties:
+        code:
+          type: string
+          description: the code of the coupon
+          example: "coupon123"
+        discount:
+          type: number
+          description: the discount amount of the coupon
+          example: "20"
+        type:
+          type: string
+          description: the type of the coupon
+          example: "PERCENTAGE"
+        expiryDate:
+          type: string
+          format: date
+          description: the expiry date of the coupon
+          example: "2022-12-31"
+        isActive:
+          type: boolean
+          description: the status of the coupon
+          example: true
 
 paths:
   /api/admin/products:
@@ -732,9 +763,93 @@ paths:
             type: string
       security:
         - BearerAuth: []
-
       responses:
         "200":
           description: Payments fetch successfully
+        "500":
+          description: Server error
+  /api/admin/coupons:
+    get:
+      tags:
+        - admin-coupons
+      summary: Get all the coupons
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Page size
+          required: false
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Coupons fetch successfully
+        "500":
+          description: Server error
+    post:
+      tags:
+        - admin-coupons
+      summary: Create a coupon
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Coupon"
+      responses:
+        "201":
+          description: Coupons created successfully
+        "500":
+          description: Server error
+  /api/admin/coupons/{id}:
+    put:
+      tags:
+        - admin-coupons
+      summary: Update a coupon
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of the coupon
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Coupon"
+      responses:
+        "200":
+          description: Coupons updated successfully
+        "500":
+          description: Server error
+    delete:
+      tags:
+        - admin-coupons
+      summary: Delete a coupon
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of the coupon
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Coupons deleted successfully
         "500":
           description: Server error

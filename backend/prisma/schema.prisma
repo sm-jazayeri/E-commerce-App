@@ -33,6 +33,11 @@ enum PaymentStatus {
   FAILED
 }
 
+enum CouponType {
+  PERCENTAGE
+  FLAT
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -100,7 +105,7 @@ model CartItem {
   productId Int
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Float // Snapshot price of the product
+  price     Float // price of the product
 }
 
 model Payment {
@@ -114,4 +119,15 @@ model Payment {
   traceNum  String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+}
+
+model Coupon {
+  id         Int        @id @default(autoincrement())
+  code       String     @unique
+  discount   Float
+  type       CouponType
+  expiryDate DateTime
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }

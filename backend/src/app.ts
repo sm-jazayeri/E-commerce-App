@@ -9,6 +9,7 @@ import adminProductRoutes from './routes/admin/adminProductRoutes';
 import adminOrderRoutes from './routes/admin/adminOrderRoutes';
 import paymentRoutes from './routes/customer/paymentRoutes';
 import adminPaymentRoutes from './routes/admin/adminPaymentRoutes';
+import adminCouponRoutes from './routes/admin/adminCouponRoutes';
 import env from "./config/env";
 import path from 'path';
 import YAML from 'yamljs';
@@ -43,7 +44,7 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/payments", adminPaymentRoutes);
-
+app.use("/api/admin/coupons", adminCouponRoutes);
 
 
 // Default route for testing
