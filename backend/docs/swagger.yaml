@@ -457,6 +457,12 @@ paths:
       summary: Get cart of the logged in user
       security:
         - BearerAuth: []
+      parameters:
+        - name: couponCode
+          in: query
+          description: Coupon code
+          schema:
+            type: string
       responses:
         "200":
           description: Cart fetched successfully
@@ -534,6 +540,12 @@ paths:
       summary: Place an order
       security:
         - BearerAuth: []
+      parameters:
+        - name: couponCode
+          in: query
+          description: Coupon code
+          schema:
+            type: string
       responses:
         "201":
           description: Order placed successfully

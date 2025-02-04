@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client"; 
 import UserRequest from "../../../types/express";
+import { calculateDiscountedAmount } from "../../utils/discount";
 
 
 const prisma = new PrismaClient(
@@ -78,6 +79,7 @@ export const addToCart = async (req: UserRequest, res: Response): Promise<void> 
 
 // Get cart items
 export const getCart = async (req: UserRequest, res: Response): Promise<void> => {
+    const couponCode = req.query.couponCode;
     try {
         // Check if user exists
         if (!req.user) {
@@ -95,7 +97,17 @@ export const getCart = async (req: UserRequest, res: Response): Promise<void> =>
             res.status(200).json({ message: 'Cart is empty', items: []});
             return;
         }
-        res.status(200).json(cart);
+
+        // Calculate discount and final amount
+        const priceData = calculateDiscountedAmount(cart, couponCode as string);
+         
+        res.status(200).json({
+            totalAmount: (await priceData).totalAmount,
+            finalAmount: (await priceData).finalAmount,
+            productDiscountAmount: (await priceData).productDiscountAmount,
+            couponDiscountAmount: (await priceData).couponDiscountAmount,
+            ...cart,
+        });
 
     } catch (err) {
         res.status(500).json({ message: 'Server error', err});

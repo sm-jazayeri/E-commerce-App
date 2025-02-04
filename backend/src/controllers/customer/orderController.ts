@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import UserRequest from "../../../types/express";
+import {calculateDiscountedAmount} from "../../utils/discount";
 
 
 
@@ -14,6 +15,9 @@ const prisma = new PrismaClient(
 
 // Place order
 export const placeOrder = async (req: UserRequest, res: Response): Promise<void> => {
+    
+    const couponCode = req.query.couponCode;
+
     try {
         if (!req.user) {
             res.status(404).json({ message: "User not found"});
@@ -22,7 +26,7 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
         const userId = req.user.id;
 
         // Find the cart items of the user
-        const cart = await prisma.cart.findMany({
+        const cart = await prisma.cart.findUnique({
             where: { userId },
             include: {
                 items: {
@@ -33,32 +37,18 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
             }
         });
 
-        if (!cart ||  cart.length === 0) {
+        if (!cart) {
             res.status(400).json({ message: "Cart is empty"});
             return;
         }
 
-        // Total price and check stock
-        let totalAmount = 0;
-        let finalAmount = 0;
-        let totalDiscount = 0;
+        // add order items
         const orderItems = [];
-
-        for (const item of cart[0].items) {
+        for (const item of cart.items) {
             if (item.product.stock < item.quantity) {
                 res.status(400).json({ message: `Not enough stock for ${item.product.name}`});
                 return;
             }
-
-            totalAmount += item.quantity * item.product.price;
-
-
-            item.product.isDiscounted ?
-                totalDiscount += item.quantity * item.product.price * ( item.product.discount || 0 ) / 100 :
-                totalDiscount = 0;
-
-
-            finalAmount = totalAmount - totalDiscount;
 
             orderItems.push({
                 productId: item.productId,
@@ -67,12 +57,15 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
             });
         }
 
+        // Calculate discounted price
+        const priceData = calculateDiscountedAmount(cart, couponCode as string);
+
         // Create the order
         const order = await prisma.order.create({
             data: {
                 userId,
-                totalAmount,
-                finalAmount,
+                totalAmount: (await priceData).totalAmount,
+                finalAmount: (await priceData).finalAmount,
                 items: {
                     create: orderItems,
                 }
@@ -80,19 +73,28 @@ export const placeOrder = async (req: UserRequest, res: Response): Promise<void>
         });
 
         // Update stock amount
-        for (const item of cart[0].items) {
+        for (const item of cart.items) {
             await prisma.product.update({
                 where: { id: item.productId },
                 data: {
                     stock: { decrement: item.quantity }
                 },
-            })
+            });
         }
 
         // Clear the cart
         const deletedCart = await prisma.cart.deleteMany({
             where: { userId }
-        })
+        });
+
+        // Deactivate coupon if applied
+        if ((await priceData).couponIsApplied) {
+
+            await prisma.coupon.update({
+                where: { code: couponCode as string},
+                data: { isActive: false}
+            });
+        }
 
         res.status(201).json(order);
 
