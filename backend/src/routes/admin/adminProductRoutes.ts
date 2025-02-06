@@ -7,7 +7,8 @@ import {
 } from "../../controllers/admin/adminProductController";
 import { protect, authorizedRoles } from "../../middlewares/authMiddleware";
 import { upload } from "../../utils/upload";
-
+import validateRequest from "../../middlewares/validateRequest";
+import { productSchema } from "../../validators/productSchema";
 
 
 const router = express.Router();
@@ -15,11 +16,11 @@ const router = express.Router();
 
 
 // Create product
-router.post('/', protect, authorizedRoles('ADMIN'), upload.single('image'), createProduct);
+router.post('/', protect, authorizedRoles('ADMIN'), validateRequest(productSchema), createProduct);
 
 
 // Update a product
-router.put('/:id', protect, authorizedRoles('ADMIN'), upload.single('image'), updateProduct);
+router.put('/:id', protect, authorizedRoles('ADMIN'), validateRequest(productSchema), updateProduct);
 
 
 // Upload image
