@@ -566,7 +566,7 @@ paths:
           description: Cart updated successfully
         "500":
           description: Server error
-  /api/customer/cart/delete/{itemId}:
+  /api/customer/cart/remove/{itemId}:
     delete:
       tags:
         - carts
