@@ -85,6 +85,26 @@ components:
           type: string
           description: the price of the product
           example: password123
+    Register:
+      type: object
+      required:
+        - phone
+        - password
+        - name
+      properties:
+        name:
+          type: string
+          description: the name of the user
+          example: Arash
+        phone:
+          type: string
+          description: the phone number of the user
+          example: "09101112233"
+        password:
+          type: string
+          description: the price of the product
+          example: password123
+
     Cart:
       type: object
       required:
@@ -292,7 +312,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Auth"
+              $ref: "#/components/schemas/Register"
       responses:
         "201":
           description: User registered successfully
