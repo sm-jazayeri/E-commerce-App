@@ -5,6 +5,8 @@ import {
     updateUser,
     deleteUser } from "../../controllers/admin/adminUserController";
 import { protect, authorizedRoles } from "../../middlewares/authMiddleware";
+import validateRequest from "../../middlewares/validateRequest";
+import {updateUserSchema} from "../../validators/userSchema";
 
 
 const router = express.Router();
@@ -18,7 +20,7 @@ router.get("/", protect, authorizedRoles('ADMIN'), getAllUsers);
 router.get("/:id", protect, authorizedRoles('ADMIN'), getUserById);
 
 // Update user information
-router.put("/:id", protect, authorizedRoles('ADMIN'), updateUser);
+router.put("/:id", protect, authorizedRoles('ADMIN'), validateRequest(updateUserSchema), updateUser);
 
 // Delete a user
 router.delete("/:id", protect, authorizedRoles('ADMIN'), deleteUser);
