@@ -14,6 +14,8 @@ import env from "./config/env";
 import path from 'path';
 import YAML from 'yamljs';
 import swaggerUi from 'swagger-ui-express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 
 
@@ -31,6 +33,19 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(helmet());
+
+// Rate limiter middleware
+const loginLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 2, // Allow max 2 attempts
+    message: {
+      message: 'Too many login attempts. Try again later.',
+    },
+    headers: true,
+});
+app.use('/api/customer/users/login', loginLimiter);
+
 
 // Customer endpoints
 app.use("/api/customer/users", userRoutes);
