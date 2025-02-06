@@ -424,6 +424,24 @@ paths:
           required: true
           schema:
             type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - phone
+              properties:
+                name:
+                  type: string
+                  description: the name of the user
+                  example: Arash
+                phone:
+                  type: string
+                  description: the phone number of the user
+                  example: "09101112233"
       security:
         - BearerAuth: []
       responses:
