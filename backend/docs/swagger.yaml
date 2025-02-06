@@ -67,10 +67,6 @@ components:
           type: number
           description: product discount amount
           example: "20"
-        image:
-          type: string
-          format: binary
-          description: the URL of the uploaded product image
     Auth:
       type: object
       required:
@@ -203,7 +199,6 @@ paths:
                 $ref: "#/components/schemas/Product"
         "500":
           description: Server error
-
     delete:
       tags:
         - admin-products
@@ -226,7 +221,38 @@ paths:
                 $ref: "#/components/schemas/Product"
         "500":
           description: Server error
-
+  /api/admin/products/{id}/upload:
+    put:
+      tags:
+        - admin-products
+      summary: Uploads image of a product
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Id of the product
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Image file
+      responses:
+        "200":
+          description: Product image uploaded successfully
+        "500":
+          description: Server error
   /api/customer/products:
     get:
       tags:

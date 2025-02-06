@@ -2,7 +2,8 @@ import express from "express";
 import {
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    uploadImage,
 } from "../../controllers/admin/adminProductController";
 import { protect, authorizedRoles } from "../../middlewares/authMiddleware";
 import { upload } from "../../utils/upload";
@@ -19,6 +20,10 @@ router.post('/', protect, authorizedRoles('ADMIN'), upload.single('image'), crea
 
 // Update a product
 router.put('/:id', protect, authorizedRoles('ADMIN'), upload.single('image'), updateProduct);
+
+
+// Upload image
+router.put('/:id/upload', protect, authorizedRoles('ADMIN'), upload.single('image'), uploadImage);
 
 
 // Delete a product

@@ -15,8 +15,6 @@ const prisma = new PrismaClient(
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
     const {name, description, price, stock, isDiscounted, discount} = req.body;
 
-    const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : null;
-
     // Convert isDiscounted to boolean if it's a string
     const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
 
@@ -27,7 +25,6 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 description,
                 price: parseFloat(price),
                 stock: parseInt(stock), 
-                imageUrl,
                 isDiscounted: isDiscountedBool,
                 discount: parseFloat(discount)
             }
@@ -46,7 +43,6 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId = parseInt(req.params.id);
     const {name, description, price, stock, isDiscounted, discount} = req.body;
-    const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : undefined;
 
     // Convert isDiscounted to boolean if it's a string
     const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
@@ -70,7 +66,6 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
                 description, 
                 price: parseInt(price),
                 stock: parseInt(stock), 
-                ...(imageUrl && {imageUrl}), // update image if 
                 isDiscounted: isDiscountedBool,
                 discount: parseFloat(discount)
             },
@@ -107,5 +102,36 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
 
     } catch (err) {
         res.status(500).json({ message: "Error in deleting product" });
+    }
+};
+
+// Upload product image
+export const uploadImage = async (req: Request, res: Response): Promise<void> => {
+    const productId = parseInt(req.params.id);
+    const imageUrl = req.file ? path.posix.join('/uploads/products', req.file.filename) : undefined;
+    
+    try {
+        // Check if product exists
+        const product = await prisma.product.findUnique({
+            where: { id: productId }
+        });
+
+        if (!product) {
+            res.status(404).json({ message: "Product not found"});
+            return;
+        }
+
+        // Upload image
+        await prisma.product.update({
+            where: { id: productId },
+            data : { 
+                ...(imageUrl && {imageUrl}), // update image if image exists
+            },
+        });
+
+        res.status(200).json({ message: "Image uploaded successfully"});
+
+    } catch (err) {
+        res.status(500).json({ message: "Error in uploading image", err});
     }
 };
