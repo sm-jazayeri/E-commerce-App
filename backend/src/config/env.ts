@@ -1,5 +1,10 @@
 import dotenv from "dotenv";
-dotenv.config();
+
+const environment = process.env.NODE_ENV;
+const envFile = environment === 'test' ? '.env.test' : '.env';
+
+dotenv.config({ path: envFile });
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const PORT = process.env.PORT || '5000';
@@ -8,6 +13,7 @@ const CALLBACK_URL = process.env.PAYMENT_CALLBACK_URL;
 const GATEWAY_URL = process.env.PAYMENT_GATEWAY_URL;
 const VERIFY_URL = process.env.PAYMENT_VERIFY_URL;
 const SEND_TOKEN_URL = process.env.PAYMENT_SEND_TOKEN_URL;
+const NODE_ENV = process.env.NODE_ENV;
 
 if(!JWT_SECRET) {
     throw new Error('Missing environment variable: JWT_SECRET');
@@ -31,6 +37,10 @@ if(!VERIFY_URL) {
 
 if(!SEND_TOKEN_URL) {
     throw new Error('Missing environment variable: SEND_TOKEN_URL');
+}
+
+if(!NODE_ENV) {
+    throw new Error('Missing environment variable: NODE_ENV');
 }
 
 

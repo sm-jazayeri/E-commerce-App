@@ -37,7 +37,7 @@ app.use(helmet());
 // Rate limiter middleware
 const loginLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minutes
-    max: 2, // Allow max 2 attempts
+    max: process.env.NODE_ENV === "test" ? 100 : 2, // Allow max 2 attempts in development, 100 in test environment
     message: {
       message: 'Too many login attempts. Try again later.',
     },
