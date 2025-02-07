@@ -1,5 +1,4 @@
 import express from 'express';
-import dotenv from'dotenv';
 import userRoutes from './routes/customer/userRoutes';
 import productRoutes from './routes/customer/productRoutes';
 import cartRoutes from './routes/customer/cartRoutes';
@@ -68,8 +67,6 @@ app.get('/', (req, res) => {
 });
 
 
-// Start the server
-app.listen(env.PORT, () => {
-    console.log(`Server is running on port ${env.PORT}`);
-    console.log(`Swagger docs available at http://localhost:${env.PORT}/api-docs`)
-});
+
+export default app;
+
