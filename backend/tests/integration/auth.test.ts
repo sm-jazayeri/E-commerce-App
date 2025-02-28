@@ -1,7 +1,9 @@
+import { describe, it, beforeAll, afterAll, expect, afterEach, beforeEach } from "@jest/globals";
 import request from "supertest";
 import app from "../../src/app"; 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+
 
 
 
@@ -26,9 +28,7 @@ describe("Authentication API", () => {
         password: "password321",
     }; 
 
-    beforeAll(async () => {
-        // Connect Prisma Client
-        await prisma.$connect();
+    beforeEach(async () => {
         // Create a test user
         const hashedPassword = await bcrypt.hash(testUser1.password, 10);
         await prisma.user.create({
@@ -40,16 +40,20 @@ describe("Authentication API", () => {
         });
     });
 
-    afterAll(async () => {
-        // Clean up the test data
-        await prisma.user.deleteMany({
-            where: {
-                phone: {in: [testUser1.phone, testUser2.phone]},
-            },
-        });
-        // Disconnect Prisma Client
-        await prisma.$disconnect();
-    });
+    afterEach(async() => {
+        // Resetting test database
+        console.log("Resetting test database");
+        await prisma.$transaction([
+          prisma.user.deleteMany(),
+          prisma.product.deleteMany(),
+          prisma.order.deleteMany(),
+          prisma.orderItem.deleteMany(),
+          prisma.cart.deleteMany(),
+          prisma.cartItem.deleteMany(),
+          prisma.coupon.deleteMany()
+        ]);
+      });
+
 
     // ✅ user successful registration
     it("[Register] should register a new user", async() => {

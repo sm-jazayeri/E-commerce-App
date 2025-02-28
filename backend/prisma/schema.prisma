@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,100 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  role      Role     @default(CUSTOMER)
+  Cart      Cart?
+  Order     Order[]
+}
+
+model Product {
+  id           Int         @id @default(autoincrement())
+  name         String
+  description  String
+  price        Float
+  imageUrl     String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  stock        Int         @default(0)
+  discount     Float?      @default(0)
+  isDiscounted Boolean     @default(false)
+  CartItem     CartItem[]
+  OrderItem    OrderItem[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  totalAmount Float
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  status      OrderStatus @default(UNPAID)
+  discount    Float?
+  finalAmount Float
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+  Payment     Payment[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int
+  price     Float
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  orderId   Int
+  amount    Float
+  status    PaymentStatus @default(PENDING)
+  resNum    String        @unique
+  refNum    String?       @unique
+  traceNum  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  order     Order         @relation(fields: [orderId], references: [id])
+}
+
+model Coupon {
+  id         Int        @id @default(autoincrement())
+  code       String     @unique
+  discount   Float
+  type       CouponType
+  expiryDate DateTime
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 enum Role {
@@ -36,98 +124,4 @@ enum PaymentStatus {
 enum CouponType {
   PERCENTAGE
   FLAT
-}
-
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  phone     String   @unique
-  password  String
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Cart      Cart?
-  Order     Order[]
-}
-
-model Product {
-  id           Int         @id @default(autoincrement())
-  name         String
-  description  String
-  price        Float
-  stock        Int         @default(0)
-  discount     Float?      @default(0)
-  isDiscounted Boolean     @default(false)
-  imageUrl     String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  OrderItem    OrderItem[]
-  CartItem     CartItem[]
-}
-
-model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id])
-  totalAmount Float
-  discount    Float?
-  finalAmount Float // total after discount
-  status      OrderStatus @default(UNPAID)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  items       OrderItem[]
-  Payment     Payment[]
-}
-
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
-  productId Int
-  quantity  Int
-  price     Float
-  order     Order   @relation(fields: [orderId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
-}
-
-model Cart {
-  id        Int        @id @default(autoincrement())
-  userId    Int        @unique
-  user      User       @relation(fields: [userId], references: [id])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  items     CartItem[]
-}
-
-model CartItem {
-  id        Int     @id @default(autoincrement())
-  cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
-  quantity  Int
-  price     Float // price of the product
-}
-
-model Payment {
-  id        Int           @id @default(autoincrement())
-  orderId   Int
-  order     Order         @relation(fields: [orderId], references: [id])
-  amount    Float
-  status    PaymentStatus @default(PENDING)
-  resNum    String        @unique
-  refNum    String?       @unique
-  traceNum  String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-model Coupon {
-  id         Int        @id @default(autoincrement())
-  code       String     @unique
-  discount   Float
-  type       CouponType
-  expiryDate DateTime
-  isActive   Boolean    @default(true)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
 }

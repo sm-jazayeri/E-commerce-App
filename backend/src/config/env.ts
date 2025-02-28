@@ -52,5 +52,6 @@ export default {
     CALLBACK_URL,
     GATEWAY_URL,
     VERIFY_URL,
-    SEND_TOKEN_URL
+    SEND_TOKEN_URL,
+    NODE_ENV,
 };
