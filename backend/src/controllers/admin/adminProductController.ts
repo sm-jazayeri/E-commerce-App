@@ -15,9 +15,6 @@ const prisma = new PrismaClient(
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
     const {name, description, price, stock, isDiscounted, discount} = req.body;
 
-    // Convert isDiscounted to boolean if it's a string
-    const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
-
     try {
         const product = await prisma.product.create({
             data: {
@@ -25,7 +22,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
                 description,
                 price: parseFloat(price),
                 stock: parseInt(stock), 
-                isDiscounted: isDiscountedBool,
+                isDiscounted: isDiscounted,
                 discount: parseFloat(discount)
             }
         });
@@ -43,9 +40,6 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId = parseInt(req.params.id);
     const {name, description, price, stock, isDiscounted, discount} = req.body;
-
-    // Convert isDiscounted to boolean if it's a string
-    const isDiscountedBool = isDiscounted === 'true' ? true : isDiscounted === 'false' ? false : false;
 
     try {
         // Check if product exists
@@ -66,7 +60,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
                 description, 
                 price: parseInt(price),
                 stock: parseInt(stock), 
-                isDiscounted: isDiscountedBool,
+                isDiscounted: isDiscounted,
                 discount: parseFloat(discount)
             },
         });
