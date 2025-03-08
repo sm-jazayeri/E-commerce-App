@@ -45,12 +45,6 @@ describe("Authentication API", () => {
         console.log("Resetting test database");
         await prisma.$transaction([
           prisma.user.deleteMany(),
-          prisma.product.deleteMany(),
-          prisma.order.deleteMany(),
-          prisma.orderItem.deleteMany(),
-          prisma.cart.deleteMany(),
-          prisma.cartItem.deleteMany(),
-          prisma.coupon.deleteMany()
         ]);
       });
 
