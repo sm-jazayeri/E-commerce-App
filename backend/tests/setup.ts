@@ -1,5 +1,4 @@
 import { execSync } from "child_process";
-import server from "../src/server";
 import dotenv from "dotenv";
 import { beforeAll, afterAll, beforeEach, afterEach } from "@jest/globals";
 import {PrismaClient} from "@prisma/client";
@@ -11,6 +10,7 @@ const prisma = new PrismaClient(
 );
 
 // Set the NODE_ENV to test
+process.env.NODE_ENV = "test"; 
 dotenv.config({ path: ".env.test" });
 
 console.log('Tests running in environment: '+ process.env.NODE_ENV)
@@ -23,5 +23,4 @@ beforeAll(async() => {
 afterAll(async() => {
   await prisma.$disconnect();
   console.log('prisma disconnected')
-  server.close(); // Stop the server after tests
 });
