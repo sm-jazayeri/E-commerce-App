@@ -13,6 +13,7 @@ const CALLBACK_URL = process.env.PAYMENT_CALLBACK_URL;
 const GATEWAY_URL = process.env.PAYMENT_GATEWAY_URL;
 const VERIFY_URL = process.env.PAYMENT_VERIFY_URL;
 const SEND_TOKEN_URL = process.env.PAYMENT_SEND_TOKEN_URL;
+const GATEWAY_BASE_URL = process.env.PAYMENT_BASE_URL;
 const NODE_ENV = process.env.NODE_ENV;
 
 if(!JWT_SECRET) {
@@ -43,6 +44,9 @@ if(!NODE_ENV) {
     throw new Error('Missing environment variable: NODE_ENV');
 }
 
+if(!GATEWAY_BASE_URL) {
+    throw new Error('Missing environment variable: GATEWAY_BASE_URL');
+}
 
 
 export default {
@@ -54,4 +58,5 @@ export default {
     VERIFY_URL,
     SEND_TOKEN_URL,
     NODE_ENV,
+    GATEWAY_BASE_URL
 };
